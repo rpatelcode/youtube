@@ -1,11 +1,11 @@
-export async function login({ username, password }) {
+export const login = async ({ username, password }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (username === 'harry' && password === 'password') {
+      if (username === "demo" && password === "demo") {
         resolve();
       } else {
         reject();
       }
     }, 1000);
   });
-}
+};

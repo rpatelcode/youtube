@@ -1,81 +1,91 @@
-import React, { useReducer } from 'react';
-import { login } from './utils';
+import React, { useReducer } from "react";
+import { login } from "./utils";
 
-function loginReducer(state, action) {
+const loginReducer = (state, action) => {
   switch (action.type) {
-    case 'field': {
+    case "field": {
       return {
         ...state,
-        [action.fieldName]: action.payload,
+        [action.fieldName]: action.payload
       };
     }
-    case 'login': {
+
+    case "login": {
       return {
         ...state,
-        error: '',
-        isLoading: true,
+        error: "",
+        isLoading: true
       };
     }
-    case 'success': {
+    case "success": {
       return {
         ...state,
         isLoggedIn: true,
-        isLoading: false,
+        isLoading: false
       };
     }
-    case 'error': {
+    case "error": {
       return {
         ...state,
-        error: 'Incorrect username or password!',
+        error: "Incorrect username or password!",
         isLoggedIn: false,
         isLoading: false,
-        username: '',
-        password: '',
+        username: "",
+        password: ""
       };
     }
-    case 'logOut': {
+    case "logOut": {
       return {
         ...state,
-        isLoggedIn: false,
+        isLoggedIn: false
       };
     }
     default:
       return state;
   }
-}
-
-const initialState = {
-  username: '',
-  password: '',
-  isLoading: false,
-  error: '',
-  isLoggedIn: false,
 };
 
-export default function LoginUseReducer() {
+const validate = values => {
+  let errors = {};
+  if (!values.username) {
+    errors.username = "User Name is required";
+  }
+  return errors;
+};
+
+const initialState = {
+  username: "",
+  password: "",
+  checkbox: false,
+  isLoading: false,
+  error: "",
+  isLoggedIn: false
+};
+
+const LoginUseReducer = () => {
   const [state, dispatch] = useReducer(loginReducer, initialState);
   const { username, password, isLoading, error, isLoggedIn } = state;
 
   const onSubmit = async e => {
     e.preventDefault();
 
-    dispatch({ type: 'login' });
+    dispatch({ type: "login" });
 
     try {
       await login({ username, password });
-      dispatch({ type: 'success' });
+      dispatch({ type: "success" });
     } catch (error) {
-      dispatch({ type: 'error' });
+      dispatch({ type: "error" });
     }
   };
-
+  console.log(state);
   return (
     <div className="App">
       <div className="login-container">
         {isLoggedIn ? (
           <>
             <h1>Welcome {username}!</h1>
-            <button onClick={() => dispatch({ type: 'logOut' })}>
+            <button onClick={() => dispatch({ type: "logOut" })}>
               Log Out
             </button>
           </>
@@ -89,9 +99,9 @@ export default function LoginUseReducer() {
               value={username}
               onChange={e =>
                 dispatch({
-                  type: 'field',
-                  fieldName: 'username',
-                  payload: e.currentTarget.value,
+                  type: "field",
+                  fieldName: "username",
+                  payload: e.currentTarget.value
                 })
               }
             />
@@ -102,18 +112,34 @@ export default function LoginUseReducer() {
               value={password}
               onChange={e =>
                 dispatch({
-                  type: 'field',
-                  fieldName: 'password',
-                  payload: e.currentTarget.value,
+                  type: "field",
+                  fieldName: "password",
+                  payload: e.currentTarget.value
                 })
               }
             />
+            <label htmlFor="cID">Click me and chceck </label>
+            <input
+              type="checkbox"
+              id="cID"
+              value={password}
+              onChange={e =>
+                dispatch({
+                  type: "field",
+                  fieldName: "checkbox",
+                  payload: e.currentTarget.checked
+                })
+              }
+            />
+
             <button className="submit" type="submit" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Log In'}
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </form>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default LoginUseReducer;
