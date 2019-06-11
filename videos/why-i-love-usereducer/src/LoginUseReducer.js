@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { login } from "./utils";
 
 const loginReducer = (state, action) => {
@@ -27,7 +27,15 @@ const loginReducer = (state, action) => {
     case "error": {
       return {
         ...state,
-        error: "Incorrect username or password!",
+        // error: "Incorrect username or password!",
+        error: [
+          {
+            login: "Incorrect username or password!",
+            // username: state.username === "" ? "User name Required" : "",
+            username: "",
+            password: "Password error"
+          }
+        ],
         isLoggedIn: false,
         isLoading: false,
         username: "",
@@ -45,29 +53,38 @@ const loginReducer = (state, action) => {
   }
 };
 
-const validate = values => {
-  let errors = {};
-  if (!values.username) {
-    errors.username = "User Name is required";
-  }
-  return errors;
-};
-
 const initialState = {
   username: "",
   password: "",
-  checkbox: false,
+  agreeing: false,
   isLoading: false,
-  error: "",
+  error: [{ login: "", username: "", password: "" }],
   isLoggedIn: false
 };
 
 const LoginUseReducer = () => {
   const [state, dispatch] = useReducer(loginReducer, initialState);
+  // const [errors, setErrors] = useState({});
   const { username, password, isLoading, error, isLoggedIn } = state;
+
+  // const validate = values => {
+  //   let errors = {};
+  //   if (username === "") {
+  //     errors.username = "User Name is required";
+  //   }
+  //   return errors;
+  // };
+
+  // useEffect(() => {
+  //   if (Object.keys(errors).length === 0 && isLoading) {
+  //     console.log("No errors");
+  //   }
+  // }, [errors]);
 
   const onSubmit = async e => {
     e.preventDefault();
+
+    // setErrors(validate());
 
     dispatch({ type: "login" });
 
@@ -91,7 +108,7 @@ const LoginUseReducer = () => {
           </>
         ) : (
           <form className="form" onSubmit={onSubmit}>
-            {error && <p className="error">{error}</p>}
+            {error.login && <p className="error">{error.login}</p>}
             <p>Please Login!</p>
             <input
               type="text"
@@ -105,6 +122,7 @@ const LoginUseReducer = () => {
                 })
               }
             />
+            {error.username && <p>User Id is required</p>}
             <input
               type="password"
               placeholder="password"
@@ -126,7 +144,7 @@ const LoginUseReducer = () => {
               onChange={e =>
                 dispatch({
                   type: "field",
-                  fieldName: "checkbox",
+                  fieldName: "agreeing",
                   payload: e.currentTarget.checked
                 })
               }
